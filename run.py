@@ -15,9 +15,10 @@ import requests
 def run(vps_number,i):
     try:
         redis = Redisclient()
+        client=MysqlClient()
         ctr=Ctrip()
         VPS=VPS_NUMBER
-        client=MysqlClient()
+
         # if int(vps_number.split('_')[1])<9:
         #     try:
         #         # VPS=ctr.login(vps_number+'_'+str(i))
