@@ -44,7 +44,7 @@ def run(vps_number,i):
                             if i == 0:
                                 #print('{}更换ip.......'.format(vps_number))
                                 pass
-
+                            break
                         client.update_xc(result)
 
 
