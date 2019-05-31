@@ -49,10 +49,10 @@ def run(vps_number,i):
 
 
             else:
-
-                print("更新任务队列")
-                redis.add_to_task_ids()
-                time.sleep(2)
+                if i == 0:
+                    print("更新任务队列")
+                    redis.add_to_task_ids()
+                    time.sleep(2)
 
     except:
         traceback.print_exc()
