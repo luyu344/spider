@@ -87,7 +87,7 @@ def check_login(cookies,vps_number):
         if response.status_code == 200 and '退出' in response.text:
             # print('Cookies有效')
             # print(response.text)
-            return vps_numbe
+            return vps_number
         else:
             return ''
     except:
