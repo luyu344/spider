@@ -1,1 +1,1 @@
-mitmdump -s /root/se_ctrip/mitm.py
+mitmdump -s /root/se_ctrip/mitm.py > /dev/null 2>&1 &
