@@ -1,1 +1,1 @@
-screen -ls|awk 'NR>=2&&NR<=20{print $1}'|awk '{print "screen -S "$1" -X quit"}'|sh
+screen -ls|grep ctr|awk -F '.' '{print $1}'|xargs kill
