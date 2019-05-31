@@ -1,1 +1,1 @@
-mitmproxy -s /root/se_ctrip/mitm.py
+mitmdump -s /root/se_ctrip/mitm.py
