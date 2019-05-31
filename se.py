@@ -14,9 +14,9 @@ import datetime
 from se_ctrip.db import MysqlClient
 from se_ctrip.move_track import get_track
 from selenium.webdriver import ActionChains
-#from pyvirtualdisplay import Display
-#display = Display(visible=0, size=(1200,900))
-#display.start()
+from pyvirtualdisplay import Display
+display = Display(visible=0, size=(1200,900))
+display.start()
 
 
 class Ctrip():
