@@ -40,3 +40,5 @@ RECENT=[15,30]
 
 VPS_NUMBER='vps_{}'.format(NO)
 
+#线程数
+THREAD_NUM=2

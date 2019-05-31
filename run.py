@@ -8,7 +8,7 @@ from se_ctrip.time_queue import date_query
 from se_ctrip.redis_db import Redisclient
 import datetime
 import threading
-from se_ctrip.settings import VPS_NUMBER
+from se_ctrip.settings import VPS_NUMBER,THREAD_NUM
 import time
 import requests
 
@@ -61,7 +61,7 @@ def run(vps_number,i):
         
 def main():
 
-    for i in range(1):
+    for i in range(THREAD_NUM):
         thread=threading.Thread(target=run,args=('vps_',i))
         thread.start()
         print('vps_'+'启动thread:',i)
