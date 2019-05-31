@@ -11,6 +11,7 @@ import traceback
 import os
 import zipfile
 import datetime
+import se_ctrip.util
 from se_ctrip.db import MysqlClient
 from se_ctrip.move_track import get_track
 from selenium.webdriver import ActionChains
@@ -34,7 +35,7 @@ class Ctrip():
         # self.chromeOptions.add_argument("--headless")
         self.chromeOptions.add_argument('--proxy-server=http://127.0.0.1:8080')
         self.chromeOptions.add_argument("log-level=3")
-        self.chromeOptions.add_argument('user-agent=Mozilla/5.0 (Linux; U; Android 8.1.0; zh-CN; BLA-AL00 Build/HUAWEIBLA-AL00) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.108 UCBrowser/11.9.4.974 UWS/2.13.1.48 Mobile Safari/537.36 AliApp(DingTalk/4.5.11) com.alibaba.android.rimet/10487439 Channel/227200 language/zh-CN')
+        self.chromeOptions.add_argument('user-agent={}'.format(random.choice(se_ctrip.util.USER_AGENT)))
         self.chromeOptions.add_argument('--window-size=450,500')
         self.chromeOptions.add_argument("--disable-gpu")
         self.chromeOptions.add_experimental_option('excludeSwitches',['enable-automation'])
