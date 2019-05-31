@@ -32,27 +32,49 @@ def run(vps_number,i):
         # ids=client.get_from_base_table()
         dates = date_query()
         while 1:
-            id=redis.get_one_task()
+            try:
+                id=redis.get_one_task()
+            except:
+                del ctr,redis,client
+                raise RuntimeError('数据库连接超时....')
+
             if id:
                 
                 for date in dates:
                     results=ctr.run(id,date,VPS)
                     start_date = datetime.datetime.strptime(date, '%Y%m%d').strftime('%Y-%m-%d')
-                    client.delete_old(id,start_date)
+                    try:
+                        client.delete_old(id,start_date)
+                    except:
+                        del ctr,redis,client
+                        raise RuntimeError('数据库连接超时....')
                     for result in results:
                         if result==1:
-                            redis.back_to_task(id)
+                            try:
+                                redis.back_to_task(id)
+                            except:
+                                del ctr, redis, client
+                                raise RuntimeError('数据库连接超时....')
+
                             if i == 0:
                                 #print('{}更换ip.......'.format(vps_number))
                                 pass
                             break
-                        client.update_xc(result)
+                        try:
+                            client.update_xc(result)
+                        except:
+                            del ctr,redis,client
+                            raise RuntimeError('数据库连接超时....')
 
 
             else:
                 if i == 0:
                     print("更新任务队列")
-                    redis.add_to_task_ids()
+                    try:
+                        redis.add_to_task_ids()
+                    except:
+                        del ctr,redis,client
+                        raise RuntimeError('数据库连接超时....')
                     time.sleep(2)
 
     except:
