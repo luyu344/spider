@@ -9,6 +9,8 @@ MYSQL_PASSWORD='86948536ZG'
 MYSQL_DB='fgzhegong'
 
 
+#vps编号
+NO=9
 
 #redis配置
 REDIS_HOST='118.25.220.202'
@@ -17,9 +19,9 @@ REDIS_PORT=6379
 
 REDIS_PASSWORD='889F88143FAA06BE2B579B1E0375A00F'
 
-BASE_TABLE='ctrip:base_ids_9'
+BASE_TABLE='ctrip:base_ids_{}'.format(NO)
 
-TASK_TABLE='ctrip:task_ids_9'
+TASK_TABLE='ctrip:task_ids_{}'.format(NO)
 
 
 
@@ -36,4 +38,5 @@ END=2
 
 RECENT=[15,30]
 
-VPS_NUMBER='vps_9'
+VPS_NUMBER='vps_{}'.format(NO)
+
