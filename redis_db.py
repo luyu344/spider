@@ -59,6 +59,11 @@ class Redisclient():
         result=random.choice(self.db.hvals('cookies:ctrip'))
         # print(result)
         return result
+
+    def get_cookies_by_phone(self,phone_number):
+
+        result=self.db.hget('ctrip_cookies',phone_number)
+        return result
 if __name__=='__main__':
     s=Redisclient()
     s.get_random_ctrip_account()

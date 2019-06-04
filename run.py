@@ -18,17 +18,15 @@ def run(vps_number,i):
         client=MysqlClient()
         ctr=Ctrip()
         VPS=VPS_NUMBER
-
-        # if int(vps_number.split('_')[1])<9:
-        #     try:
-        #         # VPS=ctr.login(vps_number+'_'+str(i))
-        #         ctr.browser.get('https://accounts.ctrip.com/H5Login/Index')
-        #         phone_number=client.get_phone_by_vps(vps_number)
-        #         login_cookies=eval(redis.get_cookies_by_phone(phone_number))
-        #         ctr.add_login_cookie(login_cookies)
-        #         VPS=check_login(login_cookies,vps_number+'_'+str(i))
-        #     except:
-        #         traceback.print_exc()
+        try:
+            # VPS=ctr.login(vps_number+'_'+str(i))
+            ctr.browser.get('https://accounts.ctrip.com/H5Login/Index')
+            phone_number=client.get_phone_by_vps(VPS)
+            login_cookies=eval(redis.get_cookies_by_phone(phone_number))
+            ctr.add_login_cookie(login_cookies)
+            VPS=check_login(login_cookies,VPS)
+        except:
+            traceback.print_exc()
         # ids=client.get_from_base_table()
         dates = date_query()
         while 1:

@@ -122,6 +122,12 @@ class MysqlClient():
         result=self.cursor.fetchone()
         return result[0]
 
+    def get_phone_by_vps(self,vps_number):
+        sql='select user from ctrip_account where vps_name="{}" '.format(vps_number)
+        self.cursor.execute(sql)
+        result=self.cursor.fetchone()
+        return  result[0]
+
 if __name__=="__main__":
 
 
