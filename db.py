@@ -125,15 +125,17 @@ class MysqlClient():
     def get_phone_by_vps(self,vps_number):
         sql='select user from ctrip_account where vps_name="{}" '.format(vps_number)
         self.cursor.execute(sql)
-        result=self.cursor.fetchone()
+        results=self.cursor.fetchall()
+        result=random.choice(results)
+        # print(result)
         return  result[0]
 
 if __name__=="__main__":
 
 
     s=MysqlClient()
-    s.get_from_base_table()
-
+    # s.get_from_base_table()
+    s.get_phone_by_vps('vps_1')
     # items=s.get_base_table_info()
     # # s.add_to_base_table()
     # for i in items:
