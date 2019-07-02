@@ -10,7 +10,7 @@ MYSQL_DB='fgzhegong'
 
 
 #vps编号
-NO=9
+NO=1
 
 #redis配置
 REDIS_HOST='118.25.220.202'
@@ -41,4 +41,4 @@ RECENT=[15,30]
 VPS_NUMBER='vps_{}'.format(NO)
 
 #线程数
-THREAD_NUM=2
+THREAD_NUM=1

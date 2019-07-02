@@ -1,17 +1,24 @@
 from mitmproxy import ctx
-import random
-str=''.join(random.sample('zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA',7))
-def request(flow):
-    if 'rooms' in flow.request.url:
-        flow.request.cookies["hoteluuid"] = "FLPsul{}MnZ".format(str)
+import time
+import hashlib
+import os
+
+md5=hashlib.md5()
+time_text=(time.strftime('%Y-%m-%d')+'vps_1').encode('utf-8')
+md5.update(time_text)
+uuid='xDVG2'+md5.hexdigest()[:11]
+
 
 def response(flow):
-   script='Object.defineProperties(navigator,{hardwareConcurrency:{get:() => 4}});Object.defineProperties(screen,{width:{get:() => 1280}};Object.defineProperties(screen,{height:{get:() => 800}};Object.defineProperties(colorDepth,{width:{get:() => 24}});Object.defineProperties(navigator,{platform:{get:() => "MacIntel"}});'
+    with open(os.path.dirname(__file__)+'/san.js','r') as f:
+        text=f.read()
+    with open(os.path.dirname(__file__)+'/mar.js','r') as ff:
+        text1=ff.read()
 
-   if 'ubt/_mubt.min.js' in flow.request.url:
-       flow.response.text =script+flow.response.text
-   if not flow.response.status_code == 200:
-       return
-   html = flow.response.text
-   html = html.replace('<head>', '<head><script>%s</script>' % script)
-   flow.response.text = html
+    if  'sanctuary'  in flow.request.url:
+        flow.response.text = text.replace('qafGI3nhbgtfdlop',uuid)
+
+
+    if 'marketing' in flow.request.url:
+        flow.response.text = text1.replace('qafGI3nhbgtfdlop',uuid)
+
