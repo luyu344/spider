@@ -33,6 +33,7 @@ def run(vps_number,i):
             try:
                 id=redis.get_one_task()
             except:
+                ctr.browser.close()
                 del ctr,redis,client
                 raise RuntimeError('数据库连接超时....')
 
@@ -44,6 +45,7 @@ def run(vps_number,i):
                     try:
                         client.delete_old(id,start_date)
                     except:
+                        ctr.browser.close()
                         del ctr,redis,client
                         raise RuntimeError('数据库连接超时....')
                     for result in results:
@@ -51,6 +53,7 @@ def run(vps_number,i):
                             try:
                                 redis.back_to_task(id)
                             except:
+                                ctr.browser.close()
                                 del ctr, redis, client
                                 raise RuntimeError('数据库连接超时....')
 
@@ -61,6 +64,7 @@ def run(vps_number,i):
                         try:
                             client.update_xc(result)
                         except:
+                            ctr.browser.close()
                             del ctr,redis,client
                             raise RuntimeError('数据库连接超时....')
 
@@ -71,13 +75,14 @@ def run(vps_number,i):
                     try:
                         redis.add_to_task_ids()
                     except:
+                        ctr.browser.close()
                         del ctr,redis,client
                         raise RuntimeError('数据库连接超时....')
                     time.sleep(2)
 
     except:
         traceback.print_exc()
-        time.sleep(3)
+        time.sleep(15)
         run(vps_number,i)
         
 def main():

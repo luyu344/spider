@@ -45,7 +45,7 @@ class Ctrip():
         self.wait=WebDriverWait(self.browser,120)
         self.url='http://hotels.ctrip.com/hotel/tianjin3'
         self.num_switch=self.get_switch_value()
- #       self.browser.set_page_load_timeout(35)
+        self.browser.set_page_load_timeout(35)
 
     def get_switch_value(self):
         s=MysqlClient()
