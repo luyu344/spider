@@ -127,7 +127,7 @@ class Ctrip():
                                 item = {}
                                 item['room_type_name'] = items[i]('div.room-bd h3').text().replace(' ', '').replace('（',
                                                                                                                     '(').replace(
-                                    '）', ')').replace('代理','').replace('详情','')
+                                    '）', ')').replace('详情','')
                                 item['start_date'] = start_date_1
                                 item['end_date'] = end_date
                                 item['roomname'] = one_room('div.room-bd p.room-size em').text()
@@ -158,7 +158,7 @@ class Ctrip():
                                 item = {}
                                 item['room_type_name'] = items[i]('div.room-bd h3').text().replace(' ', '').replace('（',
                                                                                                                     '(').replace(
-                                    '）', ')').replace('代理','').replace('详情','')
+                                    '）', ')').replace('详情','')
                                 item['start_date'] = start_date_1
                                 item['end_date'] = end_date
                                 item['roomname'] = one_room('div.room-bd p.room-size em').text()
@@ -189,7 +189,7 @@ class Ctrip():
                 for p in pattern.items():
                     if not p('div.cell-star.room-column.dl-disabled') and not p('div.cell-end p').text()=='仅剩1间' and not p('div.cell-end p').text()=='仅剩2间':
                         item = {}
-                        item['room_type_name'] = re.sub('\(.*\)', '', p('h3').text()).replace('代理','').replace('详情','').replace(' ', '')
+                        item['room_type_name'] = re.sub('\(.*\)', '', p('h3').text()).replace('详情','').replace(' ', '')
                         item['start_date'] = start_date_1
                         item['end_date'] = end_date
                         item['roomname'] = ''
