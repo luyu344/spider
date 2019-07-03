@@ -11,6 +11,7 @@ import threading
 from se_ctrip.settings import VPS_NUMBER,THREAD_NUM
 import time
 import requests
+import random
 
 def run(vps_number,i):
     try:
@@ -18,17 +19,19 @@ def run(vps_number,i):
         client=MysqlClient()
         ctr=Ctrip()
         VPS=VPS_NUMBER
-        try:
-            # VPS=ctr.login(vps_number+'_'+str(i))
-            ctr.browser.get('https://accounts.ctrip.com/H5Login/Index')
-            phone_number=client.get_phone_by_vps(VPS)
-            login_cookies=eval(redis.get_cookies_by_phone(phone_number))
-            ctr.add_login_cookie(login_cookies)
-            VPS=check_login(login_cookies,VPS)
-        except:
-            traceback.print_exc()
+        # try:
+        #     # VPS=ctr.login(vps_number+'_'+str(i))
+        #     ctr.browser.get('https://accounts.ctrip.com/H5Login/Index')
+        #     phone_number=client.get_phone_by_vps(VPS)
+        #     login_cookies=eval(redis.get_cookies_by_phone(phone_number))
+        #     ctr.add_login_cookie(login_cookies)
+        #     VPS=check_login(login_cookies,VPS)
+        # except:
+        #     traceback.print_exc()
+
         # ids=client.get_from_base_table()
         dates = date_query()
+        network_card = 'eth0'
         while 1:
             try:
                 id=redis.get_one_task()
@@ -72,6 +75,10 @@ def run(vps_number,i):
             else:
                 if i == 0:
                     print("更新任务队列")
+                    cards=['eth0','eth1','eth2','eth3','eth4','eth5']
+                    cards.remove(network_card)
+                    network_card=random.choice(cards)
+                    os.system('ip route replace default dev {}'.format(network_card))
                     try:
                         redis.add_to_task_ids()
                     except:

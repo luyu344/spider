@@ -15,9 +15,9 @@ import se_ctrip.util
 from se_ctrip.db import MysqlClient
 from se_ctrip.move_track import get_track
 from selenium.webdriver import ActionChains
-from pyvirtualdisplay import Display
-display = Display(visible=0, size=(1200,900))
-display.start()
+# from pyvirtualdisplay import Display
+# display = Display(visible=0, size=(1200,900))
+# display.start()
 
 
 class Ctrip():
@@ -36,7 +36,7 @@ class Ctrip():
         self.chromeOptions.add_argument('--proxy-server=http://127.0.0.1:8080')
         self.chromeOptions.add_argument("log-level=3")
         self.chromeOptions.add_argument('user-agent={}'.format(random.choice(se_ctrip.util.USER_AGENT)))
-        self.chromeOptions.add_argument('--window-size=450,500')
+        self.chromeOptions.add_argument('--window-size=600,700')
         self.chromeOptions.add_argument("--disable-gpu")
         self.chromeOptions.add_experimental_option('excludeSwitches',['enable-automation'])
         self.chromeOptions.add_argument('--no-sandbox')
@@ -45,7 +45,7 @@ class Ctrip():
         self.wait=WebDriverWait(self.browser,120)
         self.url='http://hotels.ctrip.com/hotel/tianjin3'
         self.num_switch=self.get_switch_value()
-        self.browser.set_page_load_timeout(35)
+        self.browser.set_page_load_timeout(60)
 
     def get_switch_value(self):
         s=MysqlClient()
@@ -96,12 +96,7 @@ class Ctrip():
 
     def run(self,hotel_id,start,vps_number):
         url='https://m.ctrip.com/webapp/hotel/hoteldetail/{}.html?atime={}&days=1&pay=1'.format(hotel_id,start)
-#        if start==(datetime.datetime.today() + datetime.timedelta(days=1)).strftime('%Y%m%d'):
-#            url='https://m.ctrip.com/webapp/hotel/hoteldetail/{}.html?atime={}&days=3&pay=1'.format(hotel_id,start)
-#            # print(url)
-#        else:
-#            url='https://m.ctrip.com/webapp/hotel/hoteldetail/{}.html?atime={}&days=1&pay=1'.format(hotel_id,start)
-#            # print(url)
+
         try:
             self.browser.get(url)
             self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR,'ul.dl-room-type')))

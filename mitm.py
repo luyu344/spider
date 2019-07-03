@@ -6,9 +6,9 @@ import os
 md5=hashlib.md5()
 time_text=(time.strftime('%Y-%m-%d')+'vps_1').encode('utf-8')
 md5.update(time_text)
-uuid='xDVG2'+md5.hexdigest()[:11]
+uuid='xDVT3'+md5.hexdigest()[:11]
 
-
+#xDVG2
 def response(flow):
     with open(os.path.dirname(__file__)+'/san.js','r') as f:
         text=f.read()
