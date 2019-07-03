@@ -35,7 +35,7 @@ class MysqlClient():
             try:
                 self.db.ping(reconnect=True)
                 self.cursor.execute(sql,tuple(item.values()))
-                self.db.commit()
+                # self.db.commit()
                 print('写入成功')
             except:
                 traceback.print_exc()
@@ -61,12 +61,12 @@ class MysqlClient():
         c = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
         sql='update {} set is_able="0",add_time="{}" where hotel_id={} and start_date="{}" '.format(XC_TABLE,c,id,start_date)
         try:
-            print("下线成功")
+            # print("下线成功")
             self.db.ping(reconnect=True)
             self.cursor.execute(sql)
-            self.db.commit()
+            # self.db.commit()
         except:
-            print('下线失败')
+            # print('下线失败')
             self.db.rollback()
 
 

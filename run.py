@@ -70,7 +70,7 @@ def run(vps_number,i):
                             ctr.browser.close()
                             del ctr,redis,client
                             raise RuntimeError('数据库连接超时....')
-
+                    client.db.commit()
 
             else:
                 if i == 0:
