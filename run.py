@@ -46,7 +46,7 @@ def run(vps_number,i):
                     results=ctr.run(id,date,VPS)
                     start_date = datetime.datetime.strptime(date, '%Y%m%d').strftime('%Y-%m-%d')
                     try:
-                        client.delete_old(id,start_date)
+                        client.offlineHotel(id,start_date)
                     except:
                         ctr.browser.close()
                         del ctr,redis,client

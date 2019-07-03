@@ -28,40 +28,35 @@ class MysqlClient():
 
     def update_xc(self,item):
         if '钟点' not in item['roomname'] and '起订' not in item['roomname']:
-            first_sql = 'select * from {} where hotel_id={} and room_type_name="{}"  and start_date="{}" and end_date="{}" and breakfast="{}" and bed="{}" and room_id="{}"'.format(XC_TABLE,
-                item['hotel_id'], item['room_type_name'],  item['start_date'],
-                item['end_date'], item['breakfast'], item['bed'],item['room_id'])
-            self.db.ping(reconnect=True)
-            self.cursor.execute(first_sql)
-            result = self.cursor.fetchone()
-            if result:
-                update_sql = 'update {} set date_price={},add_time="{}",pay="{}",is_able="{}"  where hotel_id={} and room_type_name="{}"  and start_date="{}" and end_date="{}" and breakfast="{}" and bed="{}" and room_id="{}"'.format(XC_TABLE,item['date_price'], item['add_time'], item['pay'], item['is_able'], item['hotel_id'],
-                    item['room_type_name'], item['start_date'], item['end_date'],
-                    item['breakfast'], item['bed'],item['room_id'])
-                try:
-                    self.db.ping(reconnect=True)
-                    self.cursor.execute(update_sql)
-                    self.db.commit()
-                    print('更新成功')
-                except:
-                    print('更新失败')
-                    self.db.rollback()
+            values = ','.join(['%s'] * len(item))
+            keys = ','.join(item.keys())
+            sql = 'INSERT INTO {}({}) VALUES({}) on duplicate key update date_price={},add_time="{}",pay="{}",is_able="{}",breakfast="{}"  '.format(XC_TABLE, keys, values,item['date_price'], item['add_time'], item['pay'], item['is_able'],item['breakfast'])
+            try:
+                self.db.ping(reconnect=True)
+                self.cursor.execute(sql)
+                self.db.commit()
+                print('写入成功')
+            except:
+                print('写入失败')
+                self.db.rollback()
 
-            else:
-                values = ','.join(['%s'] * len(item))
-                keys = ','.join(item.keys())
-                sql = 'INSERT INTO {}({keys}) VALUES({values})'.format(XC_TABLE,keys=keys, values=values)
-                try:
-                    self.db.ping(reconnect=True)
-                    self.cursor.execute(sql, tuple(item.values()))
-                    self.db.commit()
-                    print('插入成功')
-                except:
-                    print('插入失败')
-                    self.db.rollback()
+
+
+
 
     def delete_old(self,id,start_date):
+        """删除某天某酒店数据"""
         sql='delete from {} where hotel_id={} and start_date="{}" '.format(XC_TABLE,id,start_date)
+        try:
+            self.db.ping(reconnect=True)
+            self.cursor.execute(sql)
+            self.db.commit()
+        except:
+            self.db.rollback()
+
+    def offlineHotel(self,id,start_date):
+        """携程数据写入前先下线所有房型"""
+        sql='update {} set is_able="0" where hotel_id={} and start_date="{}" '.format(XC_TABLE,id,start_date)
         try:
             self.db.ping(reconnect=True)
             self.cursor.execute(sql)
