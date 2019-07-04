@@ -56,10 +56,10 @@ class MysqlClient():
         except:
             self.db.rollback()
 
-    def offlineHotel(self,id,start_date):
+    def offlineHotel(self,id,start_date,b):
         """携程数据写入前先下线所有房型"""
         c = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-        sql='update {} set is_able="0",add_time="{}" where hotel_id={} and start_date="{}" '.format(XC_TABLE,c,id,start_date)
+        sql='update {} set is_able="0",add_time="{}" where hotel_id={} and start_date="{}" and add_time<"{}" '.format(XC_TABLE,c,id,start_date,b)
         try:
             # print("下线成功")
             self.db.ping(reconnect=True)
@@ -68,6 +68,7 @@ class MysqlClient():
         except:
             # print('下线失败')
             self.db.rollback()
+
 
 
     def get_base_table_info(self):

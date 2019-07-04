@@ -18,15 +18,17 @@ def run(vps_number,i):
         redis = Redisclient()
         ctr=Ctrip()
         VPS=VPS_NUMBER
-        # try:
-        #     # VPS=ctr.login(vps_number+'_'+str(i))
-        #     ctr.browser.get('https://accounts.ctrip.com/H5Login/Index')
-        #     phone_number=client.get_phone_by_vps(VPS)
-        #     login_cookies=eval(redis.get_cookies_by_phone(phone_number))
-        #     ctr.add_login_cookie(login_cookies)
-        #     VPS=check_login(login_cookies,VPS)
-        # except:
-        #     traceback.print_exc()
+        try:
+            ctr.browser.get('https://accounts.ctrip.com/H5Login/Index')
+            client = MysqlClient()
+            phone_number=client.get_phone_by_vps(VPS)
+            del client
+            login_cookies=eval(redis.get_cookies_by_phone(phone_number))
+            ctr.add_login_cookie(login_cookies)
+            VPS=check_login(login_cookies,VPS)
+
+        except:
+            traceback.print_exc()
 
         # ids=client.get_from_base_table()
         dates = date_query()
@@ -45,12 +47,6 @@ def run(vps_number,i):
                     results=ctr.run(id,date,VPS)
                     client = MysqlClient()
                     start_date = datetime.datetime.strptime(date, '%Y%m%d').strftime('%Y-%m-%d')
-                    try:
-                        client.offlineHotel(id,start_date)
-                    except:
-                        ctr.browser.close()
-                        del ctr,redis,client
-                        raise RuntimeError('数据库连接超时....')
                     for result in results:
                         if result==1:
                             try:
@@ -67,6 +63,13 @@ def run(vps_number,i):
                             del ctr,redis,client
                             raise RuntimeError('数据库连接超时....')
                     client.db.commit()
+                    b = (datetime.datetime.today() + datetime.timedelta(minutes=-5)).strftime('%Y-%m-%d %H:%M:%S')
+                    try:
+                        client.offlineHotel(id, start_date, b)
+                    except:
+                        ctr.browser.close()
+                        del ctr, redis, client
+                        raise RuntimeError('数据库连接超时....')
                     del client
 
             else:
