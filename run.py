@@ -16,7 +16,6 @@ import random
 def run(vps_number,i):
     try:
         redis = Redisclient()
-        client=MysqlClient()
         ctr=Ctrip()
         VPS=VPS_NUMBER
         # try:
@@ -37,13 +36,14 @@ def run(vps_number,i):
                 id=redis.get_one_task()
             except:
                 ctr.browser.close()
-                del ctr,redis,client
+                del ctr,redis
                 raise RuntimeError('数据库连接超时....')
 
             if id:
                 
                 for date in dates:
                     results=ctr.run(id,date,VPS)
+                    client = MysqlClient()
                     start_date = datetime.datetime.strptime(date, '%Y%m%d').strftime('%Y-%m-%d')
                     try:
                         client.offlineHotel(id,start_date)
@@ -59,10 +59,6 @@ def run(vps_number,i):
                                 ctr.browser.close()
                                 del ctr, redis, client
                                 raise RuntimeError('数据库连接超时....')
-
-                            if i == 0:
-                                #print('{}更换ip.......'.format(vps_number))
-                                pass
                             break
                         try:
                             client.update_xc(result)
@@ -71,6 +67,7 @@ def run(vps_number,i):
                             del ctr,redis,client
                             raise RuntimeError('数据库连接超时....')
                     client.db.commit()
+                    del client
 
             else:
                 if i == 0:
@@ -83,7 +80,7 @@ def run(vps_number,i):
                         redis.add_to_task_ids()
                     except:
                         ctr.browser.close()
-                        del ctr,redis,client
+                        del ctr,redis
                         raise RuntimeError('数据库连接超时....')
                     time.sleep(2)
 

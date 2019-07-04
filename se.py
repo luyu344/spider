@@ -100,7 +100,7 @@ class Ctrip():
         try:
             self.browser.get(url)
             self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR,'ul.dl-room-type')))
-            sleep_time=random.randrange(2,5)
+            sleep_time=random.randrange(5,8)
             time.sleep(sleep_time)
             html = self.browser.page_source
             c = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))

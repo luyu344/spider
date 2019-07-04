@@ -64,7 +64,7 @@ class MysqlClient():
             # print("下线成功")
             self.db.ping(reconnect=True)
             self.cursor.execute(sql)
-            # self.db.commit()
+            self.db.commit()
         except:
             # print('下线失败')
             self.db.rollback()
