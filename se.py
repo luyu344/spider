@@ -15,9 +15,9 @@ import se_ctrip.util
 from se_ctrip.db import MysqlClient
 from se_ctrip.move_track import get_track
 from selenium.webdriver import ActionChains
-from pyvirtualdisplay import Display
-display = Display(visible=0, size=(1200,900))
-display.start()
+# from pyvirtualdisplay import Display
+# display = Display(visible=0, size=(1200,900))
+# display.start()
 
 
 class Ctrip():
@@ -31,11 +31,11 @@ class Ctrip():
             }}
         self.chromeOptions.add_experimental_option('prefs', prefs)
    #     self.chromeOptions.add_extension(self.get_chrome_proxy_extension(proxy='H2X613YYFK51FC3P:B14B52D0CBC69644@http-pro.abuyun.com:9010'))
- #       self.chromeOptions.add_argument('--proxy-server=http://{}:8090'.format(proxy))
-        # self.chromeOptions.add_argument("--headless")
-        self.chromeOptions.add_argument('--proxy-server=http://127.0.0.1:8080')
+
+
+        # self.chromeOptions.add_argument('--proxy-server=http://127.0.0.1:8080')
         self.chromeOptions.add_argument("log-level=3")
-        self.chromeOptions.add_argument('user-agent={}'.format(random.choice(se_ctrip.util.USER_AGENT)))
+        # self.chromeOptions.add_argument('user-agent={}'.format(random.choice(se_ctrip.util.USER_AGENT)))
         self.chromeOptions.add_argument('--window-size=600,700')
         self.chromeOptions.add_argument("--disable-gpu")
         self.chromeOptions.add_experimental_option('excludeSwitches',['enable-automation'])
@@ -354,8 +354,9 @@ class Ctrip():
 
 
 if __name__=="__main__":
-    s=Ctrip('175.155.254.161')
-    s.browser.get('https://www.baidu.com')
+    s=Ctrip()
+    # s.browser.get('https://m.ctrip.com/webapp/hotel/hoteldetail/387149.html')
+    s.browser.get('https://hotels.ctrip.com/hotel/6120881.html?starttime=2019-07-29&deptime=2019-07-30')
     time.sleep(9999)
 
 

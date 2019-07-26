@@ -32,7 +32,7 @@ def run(vps_number,i):
 
         # ids=client.get_from_base_table()
         dates = date_query()
-        network_card = 'eth0'
+        # network_card = 'eth0'
         while 1:
             try:
                 id=redis.get_one_task()
@@ -75,10 +75,10 @@ def run(vps_number,i):
             else:
                 if i == 0:
                     print("更新任务队列")
-                    cards=['eth0','eth1','eth2','eth3','eth4','eth5']
-                    cards.remove(network_card)
-                    network_card=random.choice(cards)
-                    os.system('ip route replace default dev {}'.format(network_card))
+                    # cards=['eth0','eth1','eth2','eth3','eth4','eth5']
+                    # cards.remove(network_card)
+                    # network_card=random.choice(cards)
+                    # os.system('ip route replace default dev {}'.format(network_card))
                     try:
                         redis.add_to_task_ids()
                     except:
