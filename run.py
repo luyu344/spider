@@ -95,7 +95,7 @@ def run(vps_number,i):
 def main():
 
     for i in range(THREAD_NUM):
-        thread=threading.Thread(target=run,args=('vps_',i))
+        thread=threading.Thread(target=run_pc,args=())
         thread.start()
         print('vps_'+'启动thread:',i)
 
@@ -127,7 +127,19 @@ def check_login(cookies,vps_number):
         traceback.print_exc()
         return ''
 
+def run_pc():
+    redis_client=Redisclient()
+    ctr = Ctrip()
+    dates = date_query()
+    vps_number=VPS_NUMBER
+    ctr.browser.get('https://hotels.ctrip.com/hotel/457431.html')
+    while 1:
+            id=redis_client.get_one_task()
+            for i in dates:
+                ctr.run_pc(id,i[0],i[1],vps_number)
 
+    pass
 
 if __name__=='__main__':
+    # run_pc()
     main()

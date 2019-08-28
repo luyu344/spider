@@ -11,8 +11,9 @@ def date_query():
     a = datetime.datetime.today()
     date_lists = []
     for i in range(START, END):
-        b = (a + datetime.timedelta(days=i)).strftime('%Y%m%d')
-        date_lists.append(b)
+        b = (a + datetime.timedelta(days=i)).strftime('%Y-%m-%d')
+        c =(a + datetime.timedelta(days=i+1)).strftime('%Y-%m-%d')
+        date_lists.append((b,c))
     return date_lists
 
 def hours_query():

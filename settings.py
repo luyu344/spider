@@ -21,8 +21,8 @@ REDIS_PASSWORD='889F88143FAA06BE2B579B1E0375A00F'
 
 BASE_TABLE='ctrip:base_ids_{}'.format(NO)
 
-TASK_TABLE='ctrip:task_ids_{}'.format(NO)
-
+# TASK_TABLE='ctrip:task_ids_{}'.format(NO)
+TASK_TABLE='ctrAPI:task_ids'
 
 
 #携程数据表名

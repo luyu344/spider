@@ -24,12 +24,11 @@ class Redisclient():
             self.db.rpush(TASK_TABLE,i)
 
     def get_one_task(self):
-        result=self.db.lpop(TASK_TABLE)
-
+        # result=self.db.lpop(TASK_TABLE)
+        result=self.db.rpoplpush(TASK_TABLE,TASK_TABLE)
         return result
     def add_account(self,keyname,user):
         self.db.hset('ctrip_account',keyname,user)
-
     def get_ip(self,vps_number):
         result=self.db.hget('adsl_proxy',vps_number)
         print(result)

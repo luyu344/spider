@@ -42,7 +42,18 @@ class MysqlClient():
                 print('写入失败')
                 self.db.rollback()
 
-
+    def  add_to_xc_date(self,data_str):
+        sql='insert into {} (hotel_id,room_type_id,room_type_name,room_id,date_price,start_date,end_date,breakfast,pay,add_time,is_able) values {}'.format(XC_TABLE,data_str)
+        try:
+            self.db.ping(reconnect=True)
+            self.cursor.execute(sql)
+            self.db.commit()
+            print('写入成功')
+        except Exception as e:
+            print(e)
+            # traceback.print_exc()
+            print('写入失败')
+            self.db.rollback()
 
 
 
@@ -96,7 +107,10 @@ class MysqlClient():
             self.db.rollback()
 
     def __del__(self):
-        self.db.close()
+        try:
+            self.db.close()
+        except Exception as e:
+            print(e)
 
     def get_switch(self):
         sql='select rate from price_rate where fg_hid=2'
@@ -135,8 +149,10 @@ if __name__=="__main__":
 
 
     s=MysqlClient()
+    s.db.close()
+    s.db.close()
     # s.get_from_base_table()
-    s.get_phone_by_vps('vps_1')
+    # s.get_phone_by_vps('vps_1')
     # items=s.get_base_table_info()
     # # s.add_to_base_table()
     # for i in items:

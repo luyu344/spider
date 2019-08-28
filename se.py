@@ -23,29 +23,31 @@ from selenium.webdriver import ActionChains
 class Ctrip():
 
     def __init__(self):
+        self.init_browser()
 
+
+   #     self.chromeOptions.add_extension(self.get_chrome_proxy_extension(proxy='H2X613YYFK51FC3P:B14B52D0CBC69644@http-pro.abuyun.com:9010'))
+        # self.chromeOptions.add_argument('user-agent={}'.format(random.choice(se_ctrip.util.USER_AGENT)))
+        # self.chromeOptions.add_argument('user-agent= Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Mobile/15E148 Safari/604.1')
+        # self.num_switch=self.get_switch_value()
+        # self.browser.set_page_load_timeout(60)
+    def init_browser(self):
         self.chromeOptions = webdriver.ChromeOptions()
         prefs = {
             'profile.default_content_setting_values': {
                 'images': 2,
             }}
         self.chromeOptions.add_experimental_option('prefs', prefs)
-   #     self.chromeOptions.add_extension(self.get_chrome_proxy_extension(proxy='H2X613YYFK51FC3P:B14B52D0CBC69644@http-pro.abuyun.com:9010'))
-
-
         # self.chromeOptions.add_argument('--proxy-server=http://127.0.0.1:8080')
         self.chromeOptions.add_argument("log-level=3")
-        # self.chromeOptions.add_argument('user-agent={}'.format(random.choice(se_ctrip.util.USER_AGENT)))
-        self.chromeOptions.add_argument('--window-size=600,700')
+        self.chromeOptions.add_argument('--window-size=1000,700')
         self.chromeOptions.add_argument("--disable-gpu")
-        self.chromeOptions.add_experimental_option('excludeSwitches',['enable-automation'])
+        self.chromeOptions.add_experimental_option('excludeSwitches', ['enable-automation'])
         self.chromeOptions.add_argument('--no-sandbox')
         self.chromeOptions.add_argument('--disable-dev-shm-usage')
-        self.browser=webdriver.Chrome(chrome_options=self.chromeOptions)
-        self.wait=WebDriverWait(self.browser,120)
-        self.url='http://hotels.ctrip.com/hotel/tianjin3'
-        self.num_switch=self.get_switch_value()
-        self.browser.set_page_load_timeout(60)
+        self.browser = webdriver.Chrome(chrome_options=self.chromeOptions)
+        self.wait = WebDriverWait(self.browser, 20)
+        self.browser.set_page_load_timeout(25)
 
     def get_switch_value(self):
         s=MysqlClient()
@@ -58,7 +60,10 @@ class Ctrip():
 
 
     def __del__(self):
-        self.browser.close()
+        try:
+            self.browser.quit()
+        except:
+            pass
 
     def get_chrome_proxy_extension(self,proxy):
 
@@ -248,115 +253,65 @@ class Ctrip():
             return vps_number
         self.browser.save_screenshot('/root/test_/se_ctrip/images/{}.png'.format(account))
         return ''
+    def run_pc(self,hotel_id,start,end,vps_number):
+        url='https://hotels.ctrip.com/hotel/{}.html?starttime={}&deptime={}'.format(hotel_id,start,end)
+        try:
+            self.browser.get(url)
+            self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR,'table#J_RoomListTbl')))
+            # sleep_time=random.randrange(1,3)
+            # time.sleep(sleep_time)
 
+            html=self.browser.page_source
+            doc=pq(html, parser='html')
+            all_rooms=list(doc('tr[expand]:not(.hidden)').items())
+            c = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+            all_types=doc('tr[expand]:not(.unexpanded)').items()
+            index=0
+            data_str=''
+            for room_type in all_types:
+                count=room_type('td:nth-child(1)').attr('rowspan')
+                room_type_id=int(room_type('td:nth-child(1)').attr('id'))
+                room_type_name=room_type('td:nth-child(1) a.room_unfold').remove('b').remove('br').remove('span').text().replace(' ','')
+                for one in  range(index,index+int(count)):
+                    bf=all_rooms[one]('td.col4').text().replace('无餐食','0').replace('1份早餐','1').replace('2份早餐','2').replace('4份早餐','4').replace('3份早餐','3')
+                    price= int(all_rooms[one]('td.child_name').attr('data-pricedisplay'))
+                    pay=all_rooms[one]('td.child_name').attr('data-pay')
+                    breakfast=all_rooms[one]('td.child_name').attr('data-bf')
+                    room_id_str=all_rooms[one]('td.child_name').attr('data-roomid').replace('GuessFav','')
+                    room_id=int(re.findall(r'(\d*?)[A-Za-z]',room_id_str)[0])
+                    is_able=all_rooms[one]('td.child_name').attr('data-reserve')
+                    hourly_room=all_rooms[one]('td.child_name.J_Col_RoomName').text()
+                    print((hotel_id,room_type_id,room_type_name,room_id,price,start,end,bf,pay,c,is_able))
+                    if '钟点房' not in hourly_room and pay=='3':
+                        if data_str:
+                            data_str+=','+str((int(hotel_id),room_type_id,room_type_name,room_id,price,start,end,bf,pay,c,is_able))
+                        else:
+                            data_str+=str((int(hotel_id),room_type_id,room_type_name,room_id,price,start,end,bf,pay,c,is_able))
 
+                index=index+int(count)
+            # client = MysqlClient()
+            # client.delete_old(hotel_id,start)
+            # if data_str:
+            #     client.add_to_xc_date(data_str)
 
-    def parse_info(self,html):
-        c = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-        hotelid = re.search('hoteldetail/(\d*).html', self.browser.current_url).group(1)
-        start_date = re.search('atime=(\d*)', self.browser.current_url).group(1)
-        start_date_1 = datetime.datetime.strptime(start_date, '%Y%m%d').strftime('%Y-%m-%d')
-        end_date = (datetime.datetime.strptime(start_date, '%Y%m%d') + datetime.timedelta(days=1)).strftime(
-            '%Y-%m-%d')
-        doc = pq(html, parser='html')
-        items = list(doc('li[data-ubt-key=c_hotel_inland_detail_room_basic]').items())
-        items_1 = list(doc('ul.sub-romm.js_childroomlist').items())
-        print('房型总数：', len(items_1), hotelid, start_date_1)
-        if not len(items_1) == 0:
-            for i in range(len(items_1)):
-                for one_room in items_1[i]('li[data-roomid]').items():
-                    if self.num_switch:
-                        if not ('仅剩' in one_room('div.room-bd div.cell-end p').text()) and not one_room(
-                                'div.room-bd div.cell-end.dl-disabled'):
-                            item = {}
-                            item['room_type_name'] = items[i]('div.room-bd h3').text().replace(' ', '').replace('（',
-                                                                                                                '(').replace(
-                                '）', ')')
-                            item['start_date'] = start_date_1
-                            item['end_date'] = end_date
-                            item['roomname'] = one_room('div.room-bd p.room-size em').text()
-                            item['breakfast'] = one_room('div.room-bd h4 em:nth-child(1)').text().replace('双早',
-                                                                                                          '2').replace(
-                                '无早', '0').replace('单早', '1').replace('三早', '3').replace('四早', '4').replace('五早',
-                                                                                                            '5').replace(
-                                '六早', '6').replace('八早', '8').replace('多份早餐', '7')
-                            item['bed'] = one_room('div.room-bd h4 em:nth-child(2)').text().replace('大/双床',
-                                                                                                    '3').replace(
-                                '大床', '1').replace('双床', '2').replace('多张床', '4').replace('单人床', '0')
-                            item['pay'] = one_room('div.room-bd div.dl-btn-mod button:nth-child(2)').text().replace(
-                                '在线付', '3')
-                            item['date_price'] = one_room('div.room-bd div.cell-star span.price').text().replace(
-                                '¥', '')
-                            item['is_able'] = one_room(
-                                'div.room-bd div.dl-btn-mod button:nth-child(1)').text().replace('订完', '0').replace(
-                                '订', '1')
-                            item['add_time'] = c
-                            item['hotel_id'] = hotelid
-                            item['room_id'] = one_room.attr('data-roomid')
-                            print(item)
-                            yield item
-                    else:
-                        if not one_room('div.room-bd div.cell-end p').text() == '仅剩1间' and not one_room(
-                                'div.room-bd div.cell-end.dl-disabled'):
-                            item = {}
-                            item['room_type_name'] = items[i]('div.room-bd h3').text().replace(' ', '').replace('（',
-                                                                                                                '(').replace(
-                                '）', ')')
-                            item['start_date'] = start_date_1
-                            item['end_date'] = end_date
-                            item['roomname'] = one_room('div.room-bd p.room-size em').text()
-                            item['breakfast'] = one_room('div.room-bd h4 em:nth-child(1)').text().replace('双早',
-                                                                                                          '2').replace(
-                                '无早', '0').replace('单早', '1').replace('三早', '3').replace('四早', '4').replace('五早',
-                                                                                                            '5').replace(
-                                '六早', '6').replace('八早', '8').replace('多份早餐', '7')
-                            item['bed'] = one_room('div.room-bd h4 em:nth-child(2)').text().replace('大/双床',
-                                                                                                    '3').replace(
-                                '大床', '1').replace('双床', '2').replace('多张床', '4').replace('单人床', '0')
-                            item['pay'] = one_room('div.room-bd div.dl-btn-mod button:nth-child(2)').text().replace(
-                                '在线付', '3')
-                            item['date_price'] = one_room('div.room-bd div.cell-star span.price').text().replace(
-                                '¥', '')
-                            item['is_able'] = one_room(
-                                'div.room-bd div.dl-btn-mod button:nth-child(1)').text().replace('订完', '0').replace(
-                                '订', '1')
-                            item['add_time'] = c
-                            item['hotel_id'] = hotelid
-                            item['room_id'] = one_room.attr('data-roomid')
-                            print(item)
-                            yield item
-
-        if len(items) == 0:
-            pattern = doc('li.recommend-item:not(.hourroom-item)')
-            for p in pattern.items():
-                if not p('div.cell-star.room-column.dl-disabled'):
-                    item = {}
-                    item['room_type_name'] = re.sub('\(.*\)', '', p('h3').text())
-                    item['start_date'] = start_date_1
-                    item['end_date'] = end_date
-                    item['roomname'] = ''
-                    item['breakfast'] = p('p.room-size em:nth-child(3)').text().replace('双早', '2').replace('无早',
-                                                                                                           '0').replace(
-                        '单早', '1').replace('三早', '3').replace('四早', '4').replace('五早', '5').replace('六早',
-                                                                                                    '6').replace(
-                        '八早', '8').replace('多份早餐', '7')
-                    item['bed'] = p('p.room-size em:nth-child(2)').text().replace('大/双床', '3').replace('大床',
-                                                                                                       '1').replace(
-                        '双床', '2').replace('多张床', '4').replace('单人床', '0')
-                    item['pay'] = '3'
-                    item['date_price'] = p('span.price').text().replace('¥', '')
-                    item['is_able'] = p('button.dl-btn-t.js_bookButton').text().replace('订完', '0').replace('订', '1')
-                    item['add_time'] = c
-                    item['hotel_id'] = hotelid
-                    item['room_id'] = p.attr('data-roomid')
-                    print(item)
-                    yield item
+        except Exception as e:
+            self.browser.quit()
+            # time.sleep(3)
+            self.init_browser()
+            # self.browser.get('https://www.baidu.com')
+            print(e)
 
 
 if __name__=="__main__":
     s=Ctrip()
     # s.browser.get('https://m.ctrip.com/webapp/hotel/hoteldetail/387149.html')
-    s.browser.get('https://hotels.ctrip.com/hotel/6120881.html?starttime=2019-07-29&deptime=2019-07-30')
+    # s.browser.get('https://hotels.ctrip.com/hotel/1583086.html')
+    # time.sleep(2)
+    # s.browser.get('https://hotels.ctrip.com/hotel/1583086.html')
+    # time.sleep(2)
+    s.browser.get('https://hotels.ctrip.com/hotel/457431.html')
+    # s.browser.get('https://hotels.ctrip.com/hotel/6120881.html?starttime=2019-07-29&deptime=2019-07-30')
+    for id in [2644776,39284992,375539] :
+        s.run_pc(id,'2019-08-29','2019-08-30',1)
     time.sleep(9999)
-
 
